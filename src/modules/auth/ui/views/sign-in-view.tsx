@@ -2,13 +2,16 @@
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import Link from "next/link";
-
+import { authClient } from "@/lib/auth-client"; 
 import {zodResolver} from "@hookform/resolvers/zod";
 import  {OctagonAlertIcon} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert, AlertTitle} from "@/components/ui/alert";
 import {Card, CardContent} from '@/components/ui/card';
+import { useState } from "react";
+import {useRouter} from "next/navigation";
+import {FaGithub, FaGoogle} from "react-icons/fa";
 
 import {
     Form,
@@ -25,7 +28,10 @@ const formSchema = z.object({
 });
 
 export const SignInView = () => {
-    console.log("Sign in View");
+    const [error, setError] = useState<string | null>(null);
+    const [pending, setPending] =useState(false);
+    const router = useRouter();
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues:{
@@ -33,12 +39,53 @@ export const SignInView = () => {
             password:"",
         },
     });
+
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        setError(null);
+        setPending(true);
+        authClient.signIn.email({
+            email:data.email,
+            password: data.password,
+            callbackURL:"/",
+        },
+        {
+            onSuccess: () =>{
+                setPending(false);
+                router.push("/");
+            },
+            onError:({error})=>{
+                setPending(false);
+                setError(error.message)
+            },
+        }
+    );
+};
+
+   const onSocial = (provider: "github" | "google") => {
+        setError(null);
+        setPending(true);
+        authClient.signIn.social({
+         provider: provider,
+         callbackURL:"/"
+        },
+            {
+                onSuccess: () => {
+                    setPending(false);
+                },
+                onError: ({ error }) => {
+                    setPending(false);
+                    setError(error.message)
+                },
+            }
+        );
+    };
+
     return (
         <div className='flex flex-col gap-6'>  
         <Card className="overflow-hidden p-0">
             <CardContent className="grid p-0 md:grid-cols-2">
                 <Form {...form}> 
-                    <form className="p-6 md:p-8"> 
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8"> 
                         <div className="flex flex-col gap-6">
 
                             <div className="flex flex-col items-center text-center">
@@ -55,7 +102,7 @@ export const SignInView = () => {
                                 name="email"
                                 render={({field}) =>(
                                     <FormItem>
-                                        <FormLabel> Emai</FormLabel>
+                                        <FormLabel> Email</FormLabel>
                                         <FormControl> 
                                             <Input
                                                 type="email"
@@ -89,22 +136,29 @@ export const SignInView = () => {
                                 )}
                                 />
                             </div>
-                            {true &&(
+                            {!!error &&(
                                 <Alert className="bg-destructive/10 border-none">
                                     <OctagonAlertIcon className="h-4 w-4 !text-destrutive"/>
-                                    <AlertTitle> Error</AlertTitle>
+                                    <AlertTitle> {error}</AlertTitle>
                                 </Alert> 
                             )}
-                            <Button type="submit" className="w-full">Sign In </Button>
+                            <Button disabled ={pending}  type="submit" className="w-full">Sign In </Button>
                             <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                                 <span className="bg-card text-muted-foreground z-10 px-2"> Or continue with</span>
                             </div>
+
+
                             <div className="grid grid-cols-2 gap-4">
-                                <Button variant="outline" type="button" className="w-full">
-                                    Google
+                               
+                                <Button disabled ={pending} onClick={()=> onSocial("google")} variant="outline" type="button" className="w-full">
+                                    <FaGoogle/>
                                 </Button>
-                                <Button variant="outline" type="button" className="w-full">
-                                    Github
+                               
+                                <Button 
+                                disabled ={pending}
+                                onClick={()=> onSocial("github")}
+                                variant="outline" type="button" className="w-full" >
+                                    <FaGithub/>
                                 </Button>
                             </div>
                             <div className="text-center text-sm">Don&apos;t have an account?{" "}
