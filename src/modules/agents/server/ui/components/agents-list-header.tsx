@@ -37,8 +37,6 @@ export const AgentsListHeader = () =>{
                         Clear
                     </Button>
                 ) }
-
-
             </div>
         </div>
     </>

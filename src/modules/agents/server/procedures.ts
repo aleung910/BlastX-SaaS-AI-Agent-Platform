@@ -1,21 +1,71 @@
 import { db } from "@/db";
 import {agents} from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { agentsInsertSchema } from "../schemas";
+import { agentsInsertSchema, agentsUpdateSchema } from "../schemas";
 import {z} from "zod";
 import {and, count, desc, eq, getTableColumns, ilike, sql} from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@/contants";
+import { TRPCError } from "@trpc/server";
 
 export const agentsRouter = createTRPCRouter({
+    update: protectedProcedure
+        .input(agentsUpdateSchema)
+        .mutation(async({ctx, input}) =>{
+            const[updatedAgent] = await db 
+            .update(agents)
+            .set(input)
+            .where(
+                and(
+                    eq(agents.id, input.id),
+                    eq(agents.userID, ctx.auth.user.id),
+                )
+            )
+            .returning();
+            if(!updatedAgent){
+                   throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Agent not found",
+                });
+            }
+            return updatedAgent;
+        }),
+
     //todo change getmany to proctected
-    getOne: protectedProcedure.input(z.object({id: z.string()})).query(async({input})=>{
+    remove: protectedProcedure
+        .input(z.object({id: z.string()}))
+        .mutation(async({ctx, input}) =>{
+            const [removedAgent] = await db
+            .delete(agents)
+            .where(
+                and(
+                    eq(agents.id, input.id),
+                    eq(agents.userID, ctx.auth.user.id),
+                ),
+            )
+            .returning();
+            if(!removedAgent){
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Agent not found",
+                });
+            }
+            return removedAgent;
+        }),
+    getOne: protectedProcedure.input(z.object({id: z.string()})).query(async({input, ctx})=>{
         const [exisitingAgent] = await db
         .select({
             ...getTableColumns(agents),
             meetingCount: sql<number>`5`,
         })
         .from(agents)
-        .where(eq(agents.id, input.id))
+        .where(and
+            (eq(agents.id, input.id),
+             eq(agents.userID, ctx.auth.user.id),
+        )
+    );
+    if(!exisitingAgent){
+        throw new TRPCError({code: "NOT_FOUND", message: "Agent not found"})
+    }
         return exisitingAgent;
     }),
     getMany: protectedProcedure
