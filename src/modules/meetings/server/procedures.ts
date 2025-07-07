@@ -81,7 +81,7 @@ export const meetingsRouter = createTRPCRouter({
         )
         .query(async ({ ctx, input }) => {
             const { search, page, pageSize, status, agentID } = input;
-
+          
             const data = await db
                 .select({
                     ...getTableColumns(meetings),
