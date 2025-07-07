@@ -59,7 +59,8 @@ export const agents = pgTable("agents",{
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const meetingStatus = pgEnum("meeting_status",["upcoming", "active", "completed", "processing", "cancelled"]);
+export const meetingStatus = pgEnum("meeting_status",
+    ["upcoming", "active", "completed", "processing", "cancelled"]);
 
 
 export const meetings = pgTable("meetings",{
