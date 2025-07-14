@@ -80,7 +80,8 @@ export async function POST(req:NextRequest){
             instructions: exisitingAgent.instructions,
         });
 
-    }else if(eventType === "call.session_participant_left"){
+    }
+    else if(eventType === "call.session_participant_left"){
         const event = payload as CallSessionParticipantLeftEvent;
         const meetingId = event.call_cid.split(":")[1]; //call_cid formaated as "type:id"
 
@@ -89,19 +90,25 @@ export async function POST(req:NextRequest){
         }
         const call = streamVideo.video.call("default",meetingId);
         await call.end();
-    }else if(eventType==="call.session_ended"){
+    }
+    else if(eventType==="call.session_ended"){
+
         const event = payload as CallEndedEvent;
         const meetingId = event.call.custom?.meetingId;
         
         if(!meetingId){
             return NextResponse.json({error:"Missing meetingId"}, {status: 400});
         }
+
         await db
         .update(meetings)
-        .set({status:"processing",
+        .set({
+            status:"processing",
             endedAt: new Date(),
         }).where(and(eq(meetings.id, meetingId),eq(meetings.status, "active")));
-    } else if(eventType==="call.transcription_ready"){
+
+    } 
+    else if(eventType==="call.transcription_ready"){
         const event = payload as CallTranscriptionReadyEvent;
         const meetingId = event.call_cid.split(":")[1];
         const [updatedMeeting] = await db.update(meetings).set({
@@ -109,14 +116,14 @@ export async function POST(req:NextRequest){
         })
         .where(eq(meetings.id,meetingId)).returning();
 
-
         await inngest.send({
-           name:"meeting/processing",
+           name:"meetings/processing",
            data:{
             meetingId: updatedMeeting.id,
-            transcriptURL: updatedMeeting.transcriptUrl,
+            transcriptUrl: updatedMeeting.transcriptUrl,
            },
         });
+
         if(!updatedMeeting){
             return NextResponse.json({error:"Meeting not found"}, {status: 400});
         }
@@ -127,8 +134,9 @@ export async function POST(req:NextRequest){
         await db
             .update(meetings)
             .set({recordingUrl: event.call_recording.url,
-            }).where(eq(meetings.id, meetingId));
+            })
+            .where(eq(meetings.id, meetingId));
     }
-    return NextResponse.json({status:"ok"});
 
+    return NextResponse.json({status:"ok"});
 }

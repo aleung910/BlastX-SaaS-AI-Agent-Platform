@@ -28,13 +28,17 @@ Example:
 - Feature X automatically does Y
 - Mention of integration with Z
   `.trim(),
-    model: openai({model: "gpt-4o", apiKey:process.env.OPENAI_API_KEY})
-})
+    model: openai({model: "gpt-4o", apiKey:process.env.OPENAI_API_KEY}),
+});
 
-export const meetingProcessing = inngest.createFunction(
-  { id: "meeting/processing" },
+export const meetingsProcessing = inngest.createFunction(
+  { id: "meetings/processing" },
   { event: "meetings/processing" },
-  async ({ event, step }) => {
+  async ({ event, step }) => { 
+    if (!event.data.transcriptUrl) {
+      throw new Error("transcriptUrl is required but not provided");
+    }
+
     const response = await step.run("fetch-transcript", async ()=>{
       return fetch(event.data.transcriptUrl).then((res)=> res.text());
     });
