@@ -1,4 +1,4 @@
-"use client"; //3:27
+"use client"; 
 import {Button} from '@/components/ui/button';
 import {PanelLeftIcon, PanelLeftCloseIcon, SearchIcon} from "lucide-react";
 import {useSidebar} from '@/components/ui/sidebar';
