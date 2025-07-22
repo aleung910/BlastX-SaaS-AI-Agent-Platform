@@ -4,6 +4,7 @@ import { useTRPC } from "@/trpc/client";
 import { authClient } from "@/lib/auth-client";
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
+import { PricingCard } from "../components/pricing-card";
 
 
 export const UpgradeView = () =>{
@@ -25,6 +26,39 @@ export const UpgradeView = () =>{
                     </span>{" "}
                     plan
                 </h5>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {products.map((product)=>{
+                        const isCurrentProduct = currentSubscription?.id === product.id;
+                        const isPremium = !!currentSubscription;
+
+                        let buttonText = "Upgrade";
+                        let onClick = () => authClient.checkout({products: [product.id] });
+
+                        if(isCurrentProduct){
+                            buttonText = "Manage";
+                            onClick= () => authClient.customer.portal();
+                        }
+                        else if (isPremium){
+                            buttonText = "Change Plan";
+                            onClick =() => authClient.customer.portal();
+                        }
+                        return(
+                            <PricingCard key = {product.id}
+                            buttonText={buttonText}
+                            onClick={onClick}
+                            variant={product.metadata.variant === "highlighted" ? "highlighted" : "default"}
+                            title={product.name}
+                            price={product.prices[0].amountType === "fixed" ? product.prices[0].priceAmount /100 : 0}
+                            description={product.description}
+                            priceSuffix={`${product.prices[0].recurringInterval}`}
+                            features={product.benefits.map(
+                                (benefit)=>benefit.description
+                            )}
+                            badge={product.metadata.badge as string | null}
+                            />
+                        )
+                    })}
+                </div>
             </div>
         </div>
     );
