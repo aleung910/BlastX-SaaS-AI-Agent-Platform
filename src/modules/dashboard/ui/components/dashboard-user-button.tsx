@@ -136,8 +136,6 @@ export const DashboardUserButton = () => {
                     Logout
                     <LogOutIcon className="size-4" />
                 </DropdownMenuItem>
-
-
             </DropdownMenuContent>
         </DropdownMenu>
     )
