@@ -2,7 +2,6 @@ import { DEFAULT_PAGE } from "@/contants";
 import {parseAsInteger, parseAsString, useQueryStates, parseAsStringEnum} from "nuqs";
 
 import { MeetingStatus } from "../types";
-import { Agent } from "http";
 export const useMeetingsFilters = () =>{
     return useQueryStates({
         search: parseAsString.withDefault("").withOptions({clearOnDefault:true}),
