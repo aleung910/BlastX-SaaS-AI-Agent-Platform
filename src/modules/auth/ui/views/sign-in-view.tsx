@@ -175,7 +175,7 @@ export const SignInView = () => {
                     <img src="/logo.svg" alt="Image" className="height={35} width={200}"/>
 
                     {/* Image" className="h-[92px] w-[92px] "/> */}
-                    <p className="text-2xl font-semibold text-white"> BlastX</p>
+                    {/* <p className="text-2xl font-semibold text-white"> BlastX</p> */}
                 </div>
             </CardContent>
         </Card>

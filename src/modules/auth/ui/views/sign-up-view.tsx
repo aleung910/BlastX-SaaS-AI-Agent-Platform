@@ -222,8 +222,8 @@ export const SignUpView = () => {
                     </Form>
                     <div className="bg-radial from-sidebar-accent to-sidebar relative hidden md:flex flex-col gap-y-4 items-center justify-center">
                         <img src="/logo.svg" alt="
-                    Image" className="height={35} width={200}" />
-                        <p className="text-2xl font-semibold text-white"> BlastX</p>
+                    Image" className="height={35} width={250}" />
+                        {/* <p className="text-2xl font-semibold text-white"> BlastX</p> */}
                     </div>
                 </CardContent>
             </Card>
