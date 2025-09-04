@@ -1,11 +1,10 @@
 "use client"
 import {format} from "date-fns";
-import humanizeDuration from "humanize-duration"
 import { GeneratedAvatar } from "@/components/generated-avatar"
 import { Badge } from "@/components/ui/badge"
 import { MeetingGetMany } from "../../types"
 import { ColumnDef } from "@tanstack/react-table"
-import { VideoIcon,
+import {
     CircleCheckIcon,
     CircleXIcon,
     ClockArrowUpIcon,

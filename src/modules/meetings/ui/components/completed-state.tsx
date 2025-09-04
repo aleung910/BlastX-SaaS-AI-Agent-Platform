@@ -4,8 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollBar } from "@/components/ui/scroll-area";
 import {
     SparklesIcon, FileTextIcon, FileVideoIcon, ClockFadingIcon,
-    BookOpenTextIcon,
-    FileVideo
+    BookOpenTextIcon
 } from "lucide-react";
 import Markdown from "react-markdown";
 import Link from "next/link";

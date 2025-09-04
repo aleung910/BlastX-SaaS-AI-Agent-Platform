@@ -1,4 +1,3 @@
-import { agents, user } from "@/db/schema";
 import { agentsInsertSchema } from "@/modules/agents/schemas";
 import { AgentGetOne } from "@/modules/agents/types";
 import { useTRPC } from "@/trpc/client";

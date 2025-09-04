@@ -6,7 +6,6 @@ import {
   Video, 
   Plus, 
   User, 
-  ArrowRight,
   Sparkles
 } from 'lucide-react';
 

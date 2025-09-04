@@ -3,8 +3,6 @@ import {
     CircleCheckIcon,
     ClockArrowUpIcon,
     VideoIcon,
-    LoaderIcon,
-    CircleX,
 } from "lucide-react";
 
 import { CommandSelect } from "@/components/command-select";
