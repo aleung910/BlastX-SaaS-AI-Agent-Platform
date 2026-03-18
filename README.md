@@ -1,4 +1,4 @@
-# blastX - SaaS AI Consultation Platform
+# blastX - A "Zoom-Like" Experience AI Consultation Platform
 
 > An end-to-end SaaS platform that bridges the gap between real-time video communication and generative AI, providing automated meeting intelligence and personalized AI consultation.
 
